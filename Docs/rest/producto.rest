@@ -13,4 +13,4 @@ Content-Type: application/json
 }
 
 ### nombre
-GET http://localhost:3000/producto/back?page=1&q=Pr
+GET http://localhost:3000/producto/back

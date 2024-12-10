@@ -7,25 +7,23 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductoService {
-  constructor(@InjectRepository(Producto) private productoRepository: Repository<Producto>) {}
-
-  // Query Builder helper
+  constructor(@InjectRepository(Producto) private productoRepository: Repository<Producto>) { }
   queryBuilder(alias: string) {
     return this.productoRepository.createQueryBuilder(alias);
   }
 
-  // Create a new product
+  
   async create(createProductoDto: CreateProductoDto) {
     const nuevoProducto = this.productoRepository.create(createProductoDto);
     return await this.productoRepository.save(nuevoProducto);
   }
 
-  // Retrieve all products
+
   async findAll() {
     return await this.productoRepository.find();
   }
 
-  // Retrieve a single product by ID
+
   async findOne(id: number) {
     const producto = await this.productoRepository.findOne({ where: { id } });
     if (!producto) {
@@ -34,7 +32,7 @@ export class ProductoService {
     return producto;
   }
 
-  // Update an existing product
+
   async update(id: number, updateProductoDto: UpdateProductoDto) {
     const producto = await this.productoRepository.findOne({ where: { id } });
     if (!producto) {
@@ -44,7 +42,7 @@ export class ProductoService {
     return await this.productoRepository.save(productoActualizado);
   }
 
-  // Delete a product by ID
+
   async remove(id: number) {
     const producto = await this.productoRepository.findOne({ where: { id } });
     if (!producto) {

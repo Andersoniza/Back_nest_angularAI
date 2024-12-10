@@ -8,16 +8,21 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('auth')
 export class AuthController {
 
-    constructor(private authService:AuthService){
-
-    }
+    constructor(private authService: AuthService) {}
     @Post('register')
     registerUser(@Body() userObj: RegisterAuthDto) {
         console.log(userObj);
         return this.authService.funRegister(userObj);
     }
+
     @Post('login')
-    login(@Body() credenciales: LoginAuthDto) {
-        return this.authService.login(credenciales)
+    login(@Body() credenciales: LoginAuthDto & { rememberMe: boolean }) {
+        return this.authService.login(credenciales, credenciales.rememberMe);
+    }
+
+    @Post('forgot-password')
+    async forgotPassword(@Body() body: { email: string }) {
+        const { email } = body;
+        return this.authService.forgotPassword(email);
     }
 }
