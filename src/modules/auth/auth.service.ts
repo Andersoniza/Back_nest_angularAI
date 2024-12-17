@@ -14,24 +14,32 @@ export class AuthService {
   constructor(private jwtService: JwtService,
     @InjectRepository(User) private userRepository: Repository<User>) { }
 
-  async funRegister(objUser: RegisterAuthDto) {
-    const { password } = objUser;
-    const plainToHash = await hash(password, 12);
-    objUser = { ...objUser, password: plainToHash };
-    return this.userRepository.save(objUser);
-  }
+    async funRegisterUser(objUser: RegisterAuthDto) {
+      try {
+        const { password } = objUser;
+        const hashedPassword = await hash(password, 12);
+        objUser = { ...objUser, password: hashedPassword };
+        return await this.userRepository.save(objUser);
+      } catch (error) {
+        if (error.code === '23505') { 
+          throw new HttpException('El correo ya está registrado', 400);
+        }
+        throw new HttpException('Error al registrar el usuario', 500);
+      }
+    }
 
   async login(credenciales: LoginAuthDto, rememberMe: boolean) {
     const { email, password } = credenciales;
     const user = await this.userRepository.findOne({ where: { email } });
 
-    if (!user) return new HttpException('Usuario no encontrado', 404);
+    if (!user) throw new HttpException('Usuario no encontrado', 404);
 
     const verificarPass = await compare(password, user.password);
     if (!verificarPass) throw new HttpException('Password invalido', 401);
 
     const payload = { email: user.email, id: user.id };
-    const expiresIn = rememberMe ? '2m' : '1m';
+    const expiresIn = rememberMe ? '7d' : '1d';
+    
 
     const token = this.jwtService.sign(payload, { expiresIn });
     return { user: user, token };

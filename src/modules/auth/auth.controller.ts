@@ -12,7 +12,7 @@ export class AuthController {
     @Post('register')
     registerUser(@Body() userObj: RegisterAuthDto) {
         console.log(userObj);
-        return this.authService.funRegister(userObj);
+        return this.authService.funRegisterUser(userObj);
     }
 
     @Post('login')
